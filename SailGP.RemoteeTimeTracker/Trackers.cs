@@ -6,8 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TimeTrackerTest
 {
@@ -61,7 +59,9 @@ namespace TimeTrackerTest
             var lastFilteredRemotes = filtered_remotes.LastOrDefault();
             var local_factor = Convert.ToDouble($"{local:F2}") - Convert.ToDouble(lastLocal);
 
-
+            bool IsLastFilteredRemotesZero = lastFilteredRemotes.Equals(0);
+            bool IsLastLocalFactorZero = ConvertToDouble(lastFactor.local_factor).Equals(0);
+            bool IsLastLocalFactorBiggerThenZero = ConvertToDouble(lastFactor.local_factor) > 0;
 
             //Firstly I check every local time value when they are come.
             //If next one is some the latest one,I added '-' on factor.
@@ -80,21 +80,21 @@ namespace TimeTrackerTest
             }
 
             // When set method call, add a new item in Factor. If this is the first time, Factor properties have a zero value. 
-            if(ConvertToDouble(lastFactor.local_factor).Equals(0))
+            if(IsLastLocalFactorZero)
             {
-                if(ConvertToDouble(lastFilteredRemotes).Equals(0))
+                if(IsLastFilteredRemotesZero)
 
-                filtered_remote = ConvertToDouble(locals.LastOrDefault())+ local_incr;
+                filtered_remote = ConvertToDouble(lastLocal)+ local_incr;
                 else
                 {
                     filtered_remote= ConvertToDouble(lastFilteredRemotes) + local_incr;
                 }
             }
-            else if (ConvertToDouble(lastFactor.local_factor)>0)
+            else if (IsLastLocalFactorBiggerThenZero)
             {
                 if(local_factor< local_incr)
                 {
-                    filtered_remote = ConvertToDouble(lastFilteredRemotes) + local_factor + (ConvertToDouble($"{local:F2}") );
+                    filtered_remote = ConvertToDouble(lastFilteredRemotes) + local_factor + (ConvertToDouble(local) );
                 }
                 else
                 {
@@ -119,7 +119,7 @@ namespace TimeTrackerTest
             if (!first )
             {
                 var local_factor = ConvertToDouble(local) - Convert.ToDouble(locals.LastOrDefault());
-                var remote_factor = Convert.ToDouble($"{remote:F2}") - Convert.ToDouble(remotes.LastOrDefault());
+                var remote_factor = ConvertToDouble(remote) - Convert.ToDouble(remotes.LastOrDefault());
                 if(local_factor>0 )
                 factors.Add( new Factor {local_factor=$"{local_factor:F2}", remote_factor= $"{remote_factor:F2}" });
                 else
