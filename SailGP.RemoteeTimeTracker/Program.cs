@@ -117,7 +117,9 @@ namespace TimeTrackerTest
                     }
                 }
 
-                Console.ReadLine();
+
+               /// I had added this to check all the answers.
+               //  Console.ReadLine();
             }
         }
     }

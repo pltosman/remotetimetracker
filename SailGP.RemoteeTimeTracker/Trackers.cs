@@ -42,31 +42,30 @@ namespace TimeTrackerTest
     /// </summary>
     public class SimpleTracker : ITracker
     {
-        double last_remote = 0;
+        double lastRemote = 0;
         double filtered_remote = 0;
         double new_weight = 0.3;
         bool first = true;
         List<string> remotes;
         List<string> locals;
         List<string> filtered_remotes;
-        List<Factor> factors= new List<Factor>();
-
+        List<Factor> factors = new List<Factor>();
+        const double local_incr = 0.03;
+ 
+       
         public double GetRemote(double local)
         {
-            // Gradually move our filtered estimate toward the last remote value we saw
-            //filtered_remote = (1 - new_weight) * filtered_remote + new_weight * last_remote;
+          
+            var lastLocal = locals.LastOrDefault(); 
+            var lastFactor = factors.LastOrDefault();
+            var lastFilteredRemotes = filtered_remotes.LastOrDefault();
+            var local_factor = Convert.ToDouble($"{local:F2}") - Convert.ToDouble(lastLocal);
 
 
 
-            var first_local = locals.FirstOrDefault();
-            var last_local = locals.LastOrDefault();
-            var local_factor =Convert.ToDouble( $"{local:F2}") - Convert.ToDouble(last_local);
-           
-            var factor = factors.LastOrDefault();
-
-
-
-            if(factor.local_factor.Equals("-"))
+            //Firstly I check every local time value when they are come.
+            //If next one is some the latest one,I added '-' on factor.
+            if (lastFactor.local_factor.Equals("-"))
             {
                 int i = 2;
                 string value;
@@ -77,37 +76,30 @@ namespace TimeTrackerTest
                 }
                 while (value.Equals("-"));
 
-                factor = factors[factors.Count - i+ 1];
+                lastFactor = factors[factors.Count - i+ 1];
             }
 
-
-            if(Convert.ToDouble(factor.local_factor).Equals(0))
+            // When set method call, add a new item in Factor. If this is the first time, Factor properties have a zero value. 
+            if(ConvertToDouble(lastFactor.local_factor).Equals(0))
             {
-                if(Convert.ToDouble(filtered_remotes.LastOrDefault()).Equals(0))
+                if(ConvertToDouble(lastFilteredRemotes).Equals(0))
 
-                filtered_remote = Convert.ToDouble(locals.LastOrDefault())+0.03;
+                filtered_remote = ConvertToDouble(locals.LastOrDefault())+ local_incr;
                 else
                 {
-                    filtered_remote= Convert.ToDouble(filtered_remotes.LastOrDefault()) + 0.03;
+                    filtered_remote= ConvertToDouble(lastFilteredRemotes) + local_incr;
                 }
-
-                //Math.Max(Convert.ToDouble($"{local:F2}"), Convert.ToDouble(remotes.LastOrDefault())) + local_factor;
             }
-            else if (Convert.ToDouble(factor.local_factor)>0)
+            else if (ConvertToDouble(lastFactor.local_factor)>0)
             {
-                if(local_factor<0.03)
+                if(local_factor< local_incr)
                 {
-                    filtered_remote = Convert.ToDouble(filtered_remotes.LastOrDefault()) + local_factor + (Convert.ToDouble($"{local:F2}") ;
-
-
+                    filtered_remote = ConvertToDouble(lastFilteredRemotes) + local_factor + (ConvertToDouble($"{local:F2}") );
                 }
                 else
                 {
-                    filtered_remote = Convert.ToDouble(filtered_remotes.LastOrDefault()) + 0.03;
+                    filtered_remote = ConvertToDouble(lastFilteredRemotes) + local_incr;
                 }
-
-              //  filtered_remote = Convert.ToDouble(remotes.LastOrDefault()) + Convert.ToDouble(factor.local_factor);
-               
             }
 
             filtered_remotes.Add($"{filtered_remote:F2}");
@@ -115,13 +107,18 @@ namespace TimeTrackerTest
 
             return filtered_remote;
         }
+        public double ConvertToDouble(object value)
+        {
+            return Convert.ToDouble($"{value:F2}");
+        }
+
 
         public void Set(int id, double local, double remote)
         {
 
             if (!first )
             {
-                var local_factor = Convert.ToDouble($"{local:F2}") - Convert.ToDouble(locals.LastOrDefault());
+                var local_factor = ConvertToDouble(local) - Convert.ToDouble(locals.LastOrDefault());
                 var remote_factor = Convert.ToDouble($"{remote:F2}") - Convert.ToDouble(remotes.LastOrDefault());
                 if(local_factor>0 )
                 factors.Add( new Factor {local_factor=$"{local_factor:F2}", remote_factor= $"{remote_factor:F2}" });
@@ -132,11 +129,8 @@ namespace TimeTrackerTest
 
             }
 
-
-
             if (first)
             {
-                // Start by completely trusting the first report we receive
                 first = false;
                 filtered_remote = remote;
                 remotes = new List<string>();
@@ -150,10 +144,12 @@ namespace TimeTrackerTest
             }
             remotes.Add($"{remote:F2}");
             locals.Add($"{local:F2}");
-            last_remote = remote;
+            lastRemote = remote;
 
             var remotes_str = String.Join(", ", remotes.ToArray());
 
+
+            /// I had added this to check all the answers.
             Console.WriteLine($"Remote Times: {remotes_str}");
             Console.WriteLine($"Local Times: {String.Join(", ", locals.ToArray())}");
             Console.WriteLine($"Local Factors: {String.Join(", ", factors.Select(x=>x.local_factor).ToArray())}");

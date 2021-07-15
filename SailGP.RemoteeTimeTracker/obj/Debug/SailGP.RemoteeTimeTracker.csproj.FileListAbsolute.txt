@@ -3,3 +3,4 @@
 /Users/osmanpolat/Projects/SailGP/SailGP.RemoteeTimeTracker/obj/Debug/SailGP.RemoteeTimeTracker.csproj.CoreCompileInputs.cache
 /Users/osmanpolat/Projects/SailGP/SailGP.RemoteeTimeTracker/obj/Debug/SailGP.RemoteeTimeTracker.exe
 /Users/osmanpolat/Projects/SailGP/SailGP.RemoteeTimeTracker/obj/Debug/SailGP.RemoteeTimeTracker.pdb
+/Users/osmanpolat/Projects/SailGP/SailGP.RemoteeTimeTracker/obj/Debug/SailGP.RemoteeTimeTracker.csproj.AssemblyReference.cache
