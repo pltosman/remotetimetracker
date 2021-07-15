@@ -53,15 +53,16 @@ namespace TimeTrackerTest
         public double GetRemote(double local)
         {
           
-            var lastLocal = locals.LastOrDefault();
+            var lastLocal = ConvertToDouble( locals.LastOrDefault());
             var lastRemote = ConvertToDouble( remotes.LastOrDefault());
             var lastFactor = factors.LastOrDefault();
             var lastFilteredRemote = ConvertToDouble(filtered_remotes.LastOrDefault());
-            var local_factor = Convert.ToDouble($"{local:F2}") - Convert.ToDouble(lastLocal);
+            var local_factor = ConvertToDouble(local) - lastLocal;
 
             bool IsLastFilteredRemotesZero = lastFilteredRemote.Equals(0);
             bool IsLastLocalFactorZero = ConvertToDouble(lastFactor.local_factor).Equals(0);
             bool IsLastLocalFactorBiggerThenZero = ConvertToDouble(lastFactor.local_factor) > 0;
+
             double tenpercentOfLastRemote = lastRemote * 0.1;
             bool IsInTenPercent = lastFilteredRemote < lastRemote - tenpercentOfLastRemote || lastFilteredRemote > lastRemote + tenpercentOfLastRemote ? false : true;
 
@@ -101,7 +102,7 @@ namespace TimeTrackerTest
             {
                 if(IsLastFilteredRemotesZero)
 
-                filtered_remote = ConvertToDouble(lastLocal)+ local_incr;
+                filtered_remote = lastLocal+ local_incr;
                 else
                 {
                     filtered_remote= lastFilteredRemote + local_incr;
@@ -111,7 +112,7 @@ namespace TimeTrackerTest
             {
                 if(local_factor< local_incr)
                 {
-                    filtered_remote = ConvertToDouble(lastFilteredRemote) + local_factor; // + ConvertToDouble(local);
+                    filtered_remote = lastFilteredRemote + local_factor; 
                 }
                 else
                 {
