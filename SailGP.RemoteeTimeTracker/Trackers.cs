@@ -61,7 +61,7 @@ namespace TimeTrackerTest
 
             bool IsLastFilteredRemotesZero = lastFilteredRemote.Equals(0);
             bool IsLastLocalFactorZero = ConvertToDouble(lastFactor.local_factor).Equals(0);
-            bool IsLastLocalFactorBiggerThenZero = ConvertToDouble(lastFactor.local_factor) > 0;
+            bool IsLastLocalFactorBiggerThanZero = ConvertToDouble(lastFactor.local_factor) > 0;
 
             double tenpercentOfLastRemote = lastRemote * 0.1;
             bool IsInTenPercent = lastFilteredRemote < lastRemote - tenpercentOfLastRemote || lastFilteredRemote > lastRemote + tenpercentOfLastRemote ? false : true;
@@ -108,7 +108,7 @@ namespace TimeTrackerTest
                     filtered_remote= lastFilteredRemote + local_incr;
                 }
             }
-            else if (IsLastLocalFactorBiggerThenZero)
+            else if (IsLastLocalFactorBiggerThanZero)
             {
                 if(local_factor< local_incr)
                 {
